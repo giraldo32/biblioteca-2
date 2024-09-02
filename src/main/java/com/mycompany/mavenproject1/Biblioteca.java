@@ -4,10 +4,9 @@
  */
 package com.mycompany.mavenproject1;
 
-/**
- *
- * @author Santa Teresa
- */
+import java.util.ArrayList;
+import java.util.List;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,15 +45,11 @@ public class Biblioteca {
         return null;
     }
 
-    public void mostrarCatalogo() {
-        if (catalogo.isEmpty()) {
-            System.out.println("El catálogo está vacío.");
-        } else {
-            System.out.println("Catálogo de libros:");
-            for (Libro libro : catalogo) {
-                System.out.println(libro);
-            }
-        }
+    public List<Libro> getCatalogo() {
+        return catalogo;
+    }
+
+    public List<Usuario> getUsuarios() {
+        return usuarios;
     }
 }
-

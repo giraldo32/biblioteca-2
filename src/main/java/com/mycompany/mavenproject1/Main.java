@@ -3,19 +3,17 @@
  */
 
 package com.mycompany.mavenproject1;
-import java.util.Scanner;
-/**
- *
- * @author Santa Teresa
- */
 
-
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class Main {
-    public static void main(String[] args) {
-        Biblioteca biblioteca = new Biblioteca();
-        Scanner scanner = new Scanner(System.in);
 
+    private static Biblioteca biblioteca = new Biblioteca();
+
+    public static void main(String[] args) {
         // Crear algunos libros y usuarios de ejemplo
         Libro libro1 = new Libro("El Quijote", "Miguel de Cervantes", "123456789");
         Libro libro2 = new Libro("Cien Años de Soledad", "Gabriel García Márquez", "987654321");
@@ -25,77 +23,134 @@ public class Main {
 
         biblioteca.agregarLibro(libro1);
         biblioteca.agregarLibro(libro2);
-
         biblioteca.registrarUsuario(usuario1);
         biblioteca.registrarUsuario(usuario2);
 
-        // Menú interactivo
-        int opcion;
-        do {
-            System.out.println("\nSistema de Biblioteca");
-            System.out.println("1. Mostrar catálogo de libros");
-            System.out.println("2. Prestar libro");
-            System.out.println("3. Devolver libro");
-            System.out.println("4. Mostrar libros prestados de un usuario");
-            System.out.println("5. Salir");
-            System.out.print("Seleccione una opción: ");
-            opcion = scanner.nextInt();
-            scanner.nextLine(); // limpiar buffer
+        // Configurar la interfaz gráfica
+        JFrame frame = new JFrame("Sistema de Biblioteca");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(600, 400);  // Ajustar tamaño para acomodar botones de menú
 
-            switch (opcion) {
-                case 1:
-                    biblioteca.mostrarCatalogo();
-                    break;
-                case 2:
-                    System.out.print("Ingrese el ISBN del libro: ");
-                    String isbnPrestar = scanner.nextLine();
-                    Libro libroPrestar = biblioteca.buscarLibroPorISBN(isbnPrestar);
-                    if (libroPrestar != null) {
-                        System.out.print("Ingrese la identificación del usuario: ");
-                        String idUsuarioPrestar = scanner.nextLine();
-                        Usuario usuarioPrestar = biblioteca.buscarUsuarioPorIdentificacion(idUsuarioPrestar);
-                        if (usuarioPrestar != null) {
-                            usuarioPrestar.prestarLibro(libroPrestar);
-                        } else {
-                            System.out.println("Usuario no encontrado.");
-                        }
-                    } else {
-                        System.out.println("Libro no encontrado.");
-                    }
-                    break;
-                case 3:
-                    System.out.print("Ingrese el ISBN del libro: ");
-                    String isbnDevolver = scanner.nextLine();
-                    Libro libroDevolver = biblioteca.buscarLibroPorISBN(isbnDevolver);
-                    if (libroDevolver != null) {
-                        System.out.print("Ingrese la identificación del usuario: ");
-                        String idUsuarioDevolver = scanner.nextLine();
-                        Usuario usuarioDevolver = biblioteca.buscarUsuarioPorIdentificacion(idUsuarioDevolver);
-                        if (usuarioDevolver != null) {
-                            usuarioDevolver.devolverLibro(libroDevolver);
-                        } else {
-                            System.out.println("Usuario no encontrado.");
-                        }
-                    } else {
-                        System.out.println("Libro no encontrado.");
-                    }
-                    break;
-                case 4:
-                    System.out.print("Ingrese la identificación del usuario: ");
-                    String idUsuarioLibros = scanner.nextLine();
-                    Usuario usuarioLibros = biblioteca.buscarUsuarioPorIdentificacion(idUsuarioLibros);
-                    if (usuarioLibros != null) {
-                        usuarioLibros.mostrarLibrosPrestados();
-                    } else {
-                        System.out.println("Usuario no encontrado.");
-                    }
-                    break;
-                case 5:
-                    System.out.println("Saliendo del sistema...");
-                    break;
-                default:
-                    System.out.println("Opción no válida.");
+        JPanel panel = new JPanel();
+        frame.add(panel);
+        placeComponents(panel);
+
+        frame.setVisible(true);
+    }
+
+    private static void placeComponents(JPanel panel) {
+        panel.setLayout(null);
+
+        JLabel userLabel = new JLabel("Usuario ID:");
+        userLabel.setBounds(10, 20, 80, 25);
+        panel.add(userLabel);
+
+        JTextField userText = new JTextField(20);
+        userText.setBounds(100, 20, 165, 25);
+        panel.add(userText);
+
+        JLabel isbnLabel = new JLabel("ISBN Libro:");
+        isbnLabel.setBounds(10, 50, 80, 25);
+        panel.add(isbnLabel);
+
+        JTextField isbnText = new JTextField(20);
+        isbnText.setBounds(100, 50, 165, 25);
+        panel.add(isbnText);
+
+        JButton prestarButton = new JButton("Prestar Libro");
+        prestarButton.setBounds(10, 80, 150, 25);
+        panel.add(prestarButton);
+
+        JButton devolverButton = new JButton("Devolver Libro");
+        devolverButton.setBounds(170, 80, 150, 25);
+        panel.add(devolverButton);
+
+        JButton mostrarCatalogoButton = new JButton("Mostrar Catálogo");
+        mostrarCatalogoButton.setBounds(330, 80, 150, 25);
+        panel.add(mostrarCatalogoButton);
+
+        JButton mostrarLibrosPrestadosButton = new JButton("Mostrar Libros Prestados");
+        mostrarLibrosPrestadosButton.setBounds(10, 110, 200, 25);
+        panel.add(mostrarLibrosPrestadosButton);
+
+        JButton salirButton = new JButton("Salir");
+        salirButton.setBounds(220, 110, 150, 25);
+        panel.add(salirButton);
+
+        JTextArea displayArea = new JTextArea();
+        displayArea.setBounds(10, 140, 560, 200);
+        displayArea.setEditable(false);
+        panel.add(displayArea);
+
+        // Acciones de botones
+        prestarButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String userId = userText.getText();
+                String isbn = isbnText.getText();
+                Usuario usuario = biblioteca.buscarUsuarioPorIdentificacion(userId);
+                Libro libro = biblioteca.buscarLibroPorISBN(isbn);
+
+                if (usuario != null && libro != null) {
+                    usuario.prestarLibro(libro);
+                    displayArea.setText("Libro prestado: " + libro.getTitulo());
+                } else {
+                    displayArea.setText("Usuario o libro no encontrado.");
+                }
             }
-        } while (opcion != 5);
+        });
+
+        devolverButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String userId = userText.getText();
+                String isbn = isbnText.getText();
+                Usuario usuario = biblioteca.buscarUsuarioPorIdentificacion(userId);
+                Libro libro = biblioteca.buscarLibroPorISBN(isbn);
+
+                if (usuario != null && libro != null) {
+                    usuario.devolverLibro(libro);
+                    displayArea.setText("Libro devuelto: " + libro.getTitulo());
+                } else {
+                    displayArea.setText("Usuario o libro no encontrado.");
+                }
+            }
+        });
+
+        mostrarCatalogoButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                StringBuilder catalogo = new StringBuilder("Catálogo de Libros:\n");
+                for (Libro libro : biblioteca.getCatalogo()) {
+                    catalogo.append(libro.toString()).append("\n");
+                }
+                displayArea.setText(catalogo.toString());
+            }
+        });
+
+        mostrarLibrosPrestadosButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String userId = userText.getText();
+                Usuario usuario = biblioteca.buscarUsuarioPorIdentificacion(userId);
+
+                if (usuario != null) {
+                    StringBuilder librosPrestados = new StringBuilder("Libros Prestados por " + usuario.getNombre() + ":\n");
+                    for (Libro libro : usuario.getLibrosPrestados()) {
+                        librosPrestados.append(libro.toString()).append("\n");
+                    }
+                    displayArea.setText(librosPrestados.toString());
+                } else {
+                    displayArea.setText("Usuario no encontrado.");
+                }
+            }
+        });
+
+        salirButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0); // Cierra la aplicación
+            }
+        });
     }
 }

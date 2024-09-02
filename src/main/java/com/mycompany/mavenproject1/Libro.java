@@ -40,24 +40,21 @@ public class Libro {
     public void prestar() {
         if (!prestado) {
             prestado = true;
-            System.out.println("El libro ha sido prestado.");
-        } else {
-            System.out.println("El libro ya está prestado.");
         }
     }
 
     public void devolver() {
         if (prestado) {
             prestado = false;
-            System.out.println("El libro ha sido devuelto.");
-        } else {
-            System.out.println("El libro no estaba prestado.");
         }
     }
 
     @Override
     public String toString() {
-        return "Libro{" + "titulo=" + titulo + ", autor=" + autor + ", ISBN=" + ISBN + ", prestado=" + prestado + '}';
+        return "Libro{" + "titulo='" + titulo + '\'' +
+                ", autor='" + autor + '\'' +
+                ", ISBN='" + ISBN + '\'' +
+                ", prestado=" + prestado +
+                '}';
     }
 }
-

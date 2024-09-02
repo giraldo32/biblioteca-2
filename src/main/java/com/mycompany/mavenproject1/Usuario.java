@@ -4,10 +4,9 @@
  */
 package com.mycompany.mavenproject1;
 
-/**
- *
- * @author Santa Teresa
- */
+import java.util.ArrayList;
+import java.util.List;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,8 +33,6 @@ public class Usuario {
         if (!libro.isPrestado()) {
             libro.prestar();
             librosPrestados.add(libro);
-        } else {
-            System.out.println("No se puede prestar el libro, ya está prestado.");
         }
     }
 
@@ -43,19 +40,10 @@ public class Usuario {
         if (librosPrestados.contains(libro)) {
             libro.devolver();
             librosPrestados.remove(libro);
-        } else {
-            System.out.println("Este libro no está en la lista de libros prestados.");
         }
     }
 
-    public void mostrarLibrosPrestados() {
-        if (librosPrestados.isEmpty()) {
-            System.out.println("No hay libros prestados.");
-        } else {
-            System.out.println("Libros prestados:");
-            for (Libro libro : librosPrestados) {
-                System.out.println(libro);
-            }
-        }
+    public List<Libro> getLibrosPrestados() {
+        return librosPrestados;
     }
 }
